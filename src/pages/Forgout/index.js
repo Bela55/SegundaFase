@@ -2,28 +2,31 @@ import React from 'react'
 import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity } from 'react-native'
 import * as Animatable from 'react-native-animatable'
 import { useNavigation } from '@react-navigation/native'
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function Forgout() {
     const navigation = useNavigation();
 
     return (
         <View style={styles.container}>
-
-            <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.navigate('Login')} >
+                    <Icon name="arrow-left" size={24} color="white" />
+                </TouchableOpacity>
                 <Text style={styles.message}>Digite o e-mail cadastrado</Text>
-            </Animatable.View>
-
+            </View>
             <Animatable.View animation="fadeInUp" style={styles.containerForm}>
                 <Text style={styles.title}>Email</Text>
                 <TextInput placeholder="Digite um email..." style={styles.input} />
 
-                <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText} onPress={() => navigation.navigate('Login')}>ENVIAR</Text>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
+                    <Text style={styles.buttonText} >ENVIAR</Text>
                 </TouchableOpacity>
 
             </Animatable.View>
         </View>
     )
+
 }
 
 const styles = StyleSheet.create({
@@ -31,21 +34,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#2e8b57',
     },
-    containerHeader: {
-        marginTop: '14%',
-        marginBottom: '8%',
-        paddingStart: '5%',
-    },
     containerLogo: {
         flex: 1,
         backgroundColor: '#2e8b57',
         justifyContent: 'center',
         alignItems: 'center'
-    },
-    message: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#FFF'
     },
     containerForm: {
         backgroundColor: '#FFF',
@@ -54,6 +47,22 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 25,
         paddingStart: '5%',
         paddingEnd: '5%'
+    },
+    message: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        color: 'white',
+        flex: 1,
+        textAlign: 'center',
+    },
+
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingTop: '12%',
+        paddingBottom: '12%',
+        padding: '4%'
     },
     title: {
         fontSize: 20,
