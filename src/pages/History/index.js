@@ -13,35 +13,83 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function HistoricoScreen() {
   const navigation = useNavigation();
-  const [fazendas, setFazendas] = useState([
+
+  const [fazendas, setFazendas, dados, Setdados] = useState([
     {
       id: 1,
       nome: 'Rancho da Serra',
       imageSource: require('../../assets/logo-teste.png'),
       selecionada: false,
+      dadosOcultos: ['Volume do biodigestor: 100 m²',
+        'Altura total do biodigestor: 10 m',
+        'Diametro da câmara do biodigestor: 20 m',
+        'Altura da câmara do biodigetor: 00 m',
+        'Diâmetro do biodigestor: 00 m',
+        'Altura do gasômetro: 00 m',
+        'Comprimento do cano guia: 00 m',
+        'Dimenssões dos tanques de carga e descarga: 00 m',
+        'Comprimento do cano de descarga: 00 m',
+        'Comprimento do cano de carga: 00 m',
+        'Volume de gás produzido pelo biodigestor: 00 m²',]
     },
     {
       id: 2,
       nome: 'Fazenda Bem-te-vi',
       imageSource: require('../../assets/logo-teste.png'),
       selecionada: false,
+      dadosOcultos: ['Volume do biodigestor: 200 m²',
+      'Altura total do biodigestor: 10 m',
+      'Diametro da câmara do biodigestor: 40 m',
+      'Altura da câmara do biodigetor: 00 m',
+      'Diâmetro do biodigestor: 00 m',
+      'Altura do gasômetro: 00 m',
+      'Comprimento do cano guia: 00 m',
+      'Dimenssões dos tanques de carga e descarga: 00 m',
+      'Comprimento do cano de descarga: 00 m',
+      'Comprimento do cano de carga: 00 m',
+      'Volume de gás produzido pelo biodigestor: 00 m²',]
+
     },
     {
       id: 3,
       nome: 'Rancho Fundo',
       imageSource: require('../../assets/logo-teste.png'),
       selecionada: false,
+      dadosOcultos: ['Volume do biodigestor: 100 m²',
+      'Altura total do biodigestor: 10 m',
+      'Diametro da câmara do biodigestor: 20 m',
+      'Altura da câmara do biodigetor: 00 m',
+      'Diâmetro do biodigestor: 00 m',
+      'Altura do gasômetro: 00 m',
+      'Comprimento do cano guia: 00 m',
+      'Dimenssões dos tanques de carga e descarga: 00 m',
+      'Comprimento do cano de descarga: 00 m',
+      'Comprimento do cano de carga: 00 m',
+      'Volume de gás produzido pelo biodigestor: 00 m²',]
     },
     {
       id: 4,
       nome: 'Rancho dos Vales',
       imageSource: require('../../assets/logo-teste.png'),
       selecionada: false,
+      dadosOcultos: ['Volume do biodigestor: 100 m²',
+      'Altura total do biodigestor: 10 m',
+      'Diametro da câmara do biodigestor: 20 m',
+      'Altura da câmara do biodigetor: 00 m',
+      'Diâmetro do biodigestor: 00 m',
+      'Altura do gasômetro: 00 m',
+      'Comprimento do cano guia: 00 m',
+      'Dimenssões dos tanques de carga e descarga: 00 m',
+      'Comprimento do cano de descarga: 00 m',
+      'Comprimento do cano de carga: 00 m',
+      'Volume de gás produzido pelo biodigestor: 00 m²',]
     },
   ]);
 
   const [selecoes, setSelecoes] = useState({});
   const [resultado, setResultado] = useState(null);
+  const [itemSelecionado, setItemSelecionado] = useState(null);
+
 
   const toggleSelecionada = (id) => {
     const fazendasAtualizadas = fazendas.map((fazenda) => {
@@ -71,16 +119,22 @@ export default function HistoricoScreen() {
         styles.fazendaItem,
         { backgroundColor: item.selecionada ? 'lightgray' : 'white' },
       ]}
-      onPress={() => toggleSelecionada(item.id)}
+      onPress={() => setItemSelecionado(item.id)}
     >
       <Image source={item.imageSource} style={styles.fazendaImage} />
-      <View style={styles.textContainer}>
+      <View style={[styles.textContainer, item.id === itemSelecionado && styles.itemSelecionado]}>
         <Text style={styles.fazendaNome}>{item.nome}</Text>
+        {item.id === itemSelecionado && item.dadosOcultos && (
+          <View style={styles.dadosOcultosContainer}>
+            {item.dadosOcultos.map((dadosOcultosItem, index) => (
+              <Text key={index} style={styles.dadosOcultos}>
+                {dadosOcultosItem}
+              </Text>
+            ))}
+          </View>
+        )}
         <Text style={styles.dataCalculo}>Data do Cálculo: 15/04/2023</Text>
       </View>
-      {selecoes[item.id] && (
-        <Icon name="check" size={20} color="green" style={styles.checkIcon} />
-      )}
     </TouchableOpacity>
   );
 
@@ -91,23 +145,16 @@ export default function HistoricoScreen() {
           <Icon name="arrow-left" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.title}>Histórico de Calculos</Text>
-        <TouchableOpacity onPress={() => teste}>
-          <Icon name="bars" size={24} color="white" />
-        </TouchableOpacity>
+
       </View>
       <FlatList
         data={fazendas}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
+        extraData={itemSelecionado}
         style={{ marginBottom: 20 }}
       />
-      <TouchableOpacity
-        style={styles.calcularButton}
-        onPress={calcularFazendasSelecionadas}
-      >
-        <Text style={styles.calcularButtonText}>Calcular</Text>
-      </TouchableOpacity>
-   </SafeAreaView>
+    </SafeAreaView>
   );
 }
 
@@ -135,6 +182,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
+    textAlign: 'center',
+    flex: 1,
   },
 
   fazendaItem: {
