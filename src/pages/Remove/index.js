@@ -69,9 +69,6 @@ export default function Remove() {
           <Icon name="arrow-left" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.title}>Lista de Fazendas</Text>
-        <TouchableOpacity onPress={() => teste}>
-          <Icon name="bars" size={24} color="white" />
-        </TouchableOpacity>
       </View>
       <FlatList
         data={fazendas}
@@ -113,7 +110,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
+    flex: 1,
   },
+  
   fazendaItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -156,6 +155,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#2e8b57',
   },
-});
-
-
+}); 
