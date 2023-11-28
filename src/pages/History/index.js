@@ -1,181 +1,242 @@
 import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  FlatList,
+  SafeAreaView,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Modal, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function Home() {
-    const navigation = useNavigation();
-    const [isModalVisible, setModalVisible] = useState(false);
+export default function HistoricoScreen() {
+  const navigation = useNavigation();
 
-    const toggleModal = () => {
-        setModalVisible(!isModalVisible);
-    };
+  const [fazendas, setFazendas, dados, Setdados] = useState([
+    {
+      id: 1,
+      nome: 'Rancho da Serra',
+      imageSource: require('../../assets/logo-teste.png'),
+      selecionada: false,
+      dadosOcultos: ['Volume do biodigestor: 100 m²',
+        'Altura total do biodigestor: 10 m',
+        'Diametro da câmara do biodigestor: 20 m',
+        'Altura da câmara do biodigetor: 00 m',
+        'Diâmetro do biodigestor: 00 m',
+        'Altura do gasômetro: 00 m',
+        'Comprimento do cano guia: 00 m',
+        'Dimenssões dos tanques de carga e descarga: 00 m',
+        'Comprimento do cano de descarga: 00 m',
+        'Comprimento do cano de carga: 00 m',
+        'Volume de gás produzido pelo biodigestor: 00 m²',]
+    },
+    {
+      id: 2,
+      nome: 'Fazenda Bem-te-vi',
+      imageSource: require('../../assets/logo-teste.png'),
+      selecionada: false,
+      dadosOcultos: ['Volume do biodigestor: 200 m²',
+      'Altura total do biodigestor: 10 m',
+      'Diametro da câmara do biodigestor: 40 m',
+      'Altura da câmara do biodigetor: 00 m',
+      'Diâmetro do biodigestor: 00 m',
+      'Altura do gasômetro: 00 m',
+      'Comprimento do cano guia: 00 m',
+      'Dimenssões dos tanques de carga e descarga: 00 m',
+      'Comprimento do cano de descarga: 00 m',
+      'Comprimento do cano de carga: 00 m',
+      'Volume de gás produzido pelo biodigestor: 00 m²',]
 
-    const handleLogout = () => {
-        toggleModal(); 
-        // lógica de logout
-        navigation.navigate('Login'); 
-    };
+    },
+    {
+      id: 3,
+      nome: 'Rancho Fundo',
+      imageSource: require('../../assets/logo-teste.png'),
+      selecionada: false,
+      dadosOcultos: ['Volume do biodigestor: 100 m²',
+      'Altura total do biodigestor: 10 m',
+      'Diametro da câmara do biodigestor: 20 m',
+      'Altura da câmara do biodigetor: 00 m',
+      'Diâmetro do biodigestor: 00 m',
+      'Altura do gasômetro: 00 m',
+      'Comprimento do cano guia: 00 m',
+      'Dimenssões dos tanques de carga e descarga: 00 m',
+      'Comprimento do cano de descarga: 00 m',
+      'Comprimento do cano de carga: 00 m',
+      'Volume de gás produzido pelo biodigestor: 00 m²',]
+    },
+    {
+      id: 4,
+      nome: 'Rancho dos Vales',
+      imageSource: require('../../assets/logo-teste.png'),
+      selecionada: false,
+      dadosOcultos: ['Volume do biodigestor: 100 m²',
+      'Altura total do biodigestor: 10 m',
+      'Diametro da câmara do biodigestor: 20 m',
+      'Altura da câmara do biodigetor: 00 m',
+      'Diâmetro do biodigestor: 00 m',
+      'Altura do gasômetro: 00 m',
+      'Comprimento do cano guia: 00 m',
+      'Dimenssões dos tanques de carga e descarga: 00 m',
+      'Comprimento do cano de descarga: 00 m',
+      'Comprimento do cano de carga: 00 m',
+      'Volume de gás produzido pelo biodigestor: 00 m²',]
+    },
+  ]);
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isModalVisible}
-                onRequestClose={() => {
-                    toggleModal();
-                }}
-            >
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        <Text style={styles.modalText}>Deseja sair?</Text>
-                        <TouchableOpacity
-                            style={styles.modalButton}
-                            onPress={() => handleLogout()}
-                        >
-                            <Text style={styles.modalButtonText}>Sim</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.modalButton}
-                            onPress={() => toggleModal()}
-                        >
-                            <Text style={styles.modalButtonText}>Não</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
+  const [selecoes, setSelecoes] = useState({});
+  const [resultado, setResultado] = useState(null);
+  const [itemSelecionado, setItemSelecionado] = useState(null);
 
-            <View style={styles.header}>
-                <Text style={styles.title}>Olá, Sr(a) Pessoa</Text>
-                <TouchableOpacity onPress={toggleModal}>
-                    <Icon name="sign-out" size={24} color="white" />
-                </TouchableOpacity>
-            </View>
 
-            <SafeAreaView style={styles.row}>
-                <TouchableOpacity
-                    style={styles.section}
-                    onPress={() => navigation.navigate('Cadastro de Fazenda')}
-                >
-                    <Image
-                        source={require('../../assets/logo-teste.png')}
-                        style={styles.sectionImage}
-                    />
-                    <Text style={styles.sectionText}>Cadastrar Fazenda</Text>
-                </TouchableOpacity>
+  const toggleSelecionada = (id) => {
+    const fazendasAtualizadas = fazendas.map((fazenda) => {
+      if (fazenda.id === id) {
+        return { ...fazenda, selecionada: !fazenda.selecionada };
+      }
+      return fazenda;
+    });
+    setFazendas(fazendasAtualizadas);
 
-                <TouchableOpacity
-                    style={styles.section}
-                    onPress={() => navigation.navigate('Calculo Detalhado')}
+    setSelecoes((prevState) => ({
+      ...prevState,
+      [id]: !prevState[id],
+    }));
+  };
 
-                >
-                    <Image
-                        source={require('../../assets/logo-teste.png')}
-                        style={styles.sectionImage}
-                    />
-                    <Text style={styles.sectionText}>Cálculo Detalhado</Text>
-                </TouchableOpacity>
-            </SafeAreaView>
+  const calcularFazendasSelecionadas = () => {
+    // Lógica para calcular as fazendas selecionadas aqui
+    const fazendasSelecionadas = fazendas.filter((fazenda) => fazenda.selecionada);
+    // lógica do cálculo aqui
+    setResultado(`Fazendas selecionadas: ${fazendasSelecionadas.length}`);
+  };
 
-            <SafeAreaView style={styles.row}>
-                <TouchableOpacity
-                    style={styles.section}
-                    onPress={() => navigation.navigate('Histórico')}
-                >
-                    <Image
-                        source={require('../../assets/logo-teste.png')}
-                        style={styles.sectionImage}
-                    />
-                    <Text style={styles.sectionText}>Histórico</Text>
-                </TouchableOpacity>
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={[
+        styles.fazendaItem,
+        { backgroundColor: item.selecionada ? 'lightgray' : 'white' },
+      ]}
+      onPress={() => setItemSelecionado(item.id)}
+    >
+      <Image source={item.imageSource} style={styles.fazendaImage} />
+      <View style={[styles.textContainer, item.id === itemSelecionado && styles.itemSelecionado]}>
+        <Text style={styles.fazendaNome}>{item.nome}</Text>
+        {item.id === itemSelecionado && item.dadosOcultos && (
+          <View style={styles.dadosOcultosContainer}>
+            {item.dadosOcultos.map((dadosOcultosItem, index) => (
+              <Text key={index} style={styles.dadosOcultos}>
+                {dadosOcultosItem}
+              </Text>
+            ))}
+          </View>
+        )}
+        <Text style={styles.dataCalculo}>Data do Cálculo: 15/04/2023</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
-                <TouchableOpacity
-                    style={styles.section}
-                    onPress={() => navigation.navigate('Remover Fazendas')}
-                >
-                    <Image
-                        source={require('../../assets/logo-teste.png')}
-                        style={styles.sectionImage}
-                    />
-                    <Text style={styles.sectionText}>Remover Fazendas</Text>
-                </TouchableOpacity>
-            </SafeAreaView>
-        </SafeAreaView>
-    );
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.navigate('Ola, Sr(a) Pessoa')}>
+          <Icon name="arrow-left" size={24} color="white" />
+        </TouchableOpacity>
+        <Text style={styles.title}>Histórico de Calculos</Text>
+
+      </View>
+      <FlatList
+        data={fazendas}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        extraData={itemSelecionado}
+        style={{ marginBottom: 20 }}
+      />
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#2e8b57',
-        padding: 16,
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between', 
-        marginBottom: 12, 
-        padding: '4%'
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: 'white',
-    },
-    row: {
-        flexDirection: 'row',
-        marginBottom: 2,
-    },
-    section: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: 'gray',
-        marginHorizontal: 6,
-        borderRadius: 30,
-        backgroundColor: 'white',
-        padding: 15,
-    },
-    sectionImage: {
-        width: 100,
-        height: 100,
-    },
-    sectionText: {
-        fontSize: 18,
-        marginTop: 10,
-        textAlign: 'center',
-    },
-    modalView: {
-        margin: 20,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 35,
-        alignItems: 'center',
-    },
-    modalText: {
-        fontSize: 20,
-        marginBottom: 20,
-        textAlign: 'center',
-    },
-    modalButton: {
-        backgroundColor: '#2e8b57',
-        borderRadius: 10,
-        padding: 10,
-        margin: 10,
-        width: 100,
-    },
-    modalButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#2e8b57',
+    padding: 16,
+    paddingStart: '2%',
+    paddingEnd: '2%',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+    paddingTop: '8%',
+    paddingBottom: '8%',
+    padding: '4%',
+  },
+  iconButton: {
+    paddingTop: '12%',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
+    flex: 1,
+  },
+
+  fazendaItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: 8,
+    marginBottom: 16,
+    padding: 16,
+    backgroundColor: 'white',
+  },
+  fazendaImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+  },
+  textContainer: {
+    flex: 1,
+    marginLeft: 16,
+  },
+  fazendaNome: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  dataCalculo: {
+    fontSize: 12,
+    color: 'gray',
+  },
+  checkIcon: {
+    marginRight: 8,
+  },
+  calcularButton: {
+    backgroundColor: 'white',
+    padding: 18,
+    width: '50%',
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginBottom: '10%',
+  },
+  calcularButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2e8b57',
+  },
+  resultado: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+    marginTop: 16,
+    textAlign: 'center',
+  },
 });
+
+
