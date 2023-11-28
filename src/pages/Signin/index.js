@@ -1,18 +1,32 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useNavigation } from '@react-navigation/native';
 
 export default function SignIn() {
   const navigation = useNavigation();
   const [senha, setSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [email, setEmail] = useState('');
 
   const toggleMostrarSenha = () => {
     setMostrarSenha(!mostrarSenha);
   };
 
+  const handleLogin = () => {
+    const loginValido = true; // Substitua por sua lógica real de validação do login
+    const senhaValida = true; // Substitua por sua lógica real de validação da senha
+
+    if (loginValido && senhaValida) {
+      // Login bem-sucedido, navegue para a próxima tela ou execute outras ações necessárias
+      navigation.navigate('Ola, Sr(a) Pessoa');
+    } else {
+      // Login inválido, exiba um alerta em vermelho
+      Alert.alert('Erro', 'Login ou senha inválidos', [{ text: 'OK', style: 'destructive' }]);
+    }
+  };
+  
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
@@ -21,7 +35,11 @@ export default function SignIn() {
 
       <Animatable.View animation="fadeInUp" style={styles.containerForm}>
         <Text style={styles.title}>Email</Text>
-        <TextInput placeholder="Digite um email..." style={styles.input} />
+        <TextInput
+          placeholder="Digite um email..."
+          style={styles.input}
+          onChangeText={(text) => setEmail(text)}
+        />
 
         <Text style={styles.title}>Senha</Text>
         <View style={styles.inputSenhaContainer}>
@@ -38,12 +56,12 @@ export default function SignIn() {
           </TouchableOpacity>
         </View>
     
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Ola, Sr(a) Pessoa')}>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText} >Acessar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.buttonRegister} onPress={() => navigation.navigate('Cadastre-se')}>
-          <Text style={styles.registerText} >Nao possui uma conta? Cadastre-se</Text>
+          <Text style={styles.registerText} >Não possui uma conta? Cadastre-se</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.buttonForgout} onPress={() => navigation.navigate('Redefinir a senha')}>
