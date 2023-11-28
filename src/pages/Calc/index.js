@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ScrollView, View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Appbar, Button } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 
 const Calculo = () => {
@@ -38,14 +39,10 @@ const Calculo = () => {
   return (
     <ScrollView style={styles.container}>
       <Appbar.Header style={styles.header}>
-        <Appbar.BackAction  onPress={() => navigation.goBack() } style={styles.back}/>
+      <TouchableOpacity onPress={ () => navigation.navigate('Ola, Sr(a) Pessoa')}>
+        <Icon name="arrow-left" size={24} color="white" />
+      </TouchableOpacity>
         <Appbar.Content title="Calculo da Fazenda" titleStyle={styles.title} />
-        <Ionicons
-          name="menu-outline"
-          size={24}
-          color="white"
-          onPress={() => console.log('Shown more')}
-        />
       </Appbar.Header>
 
       <View style={styles.text1}>
@@ -84,13 +81,11 @@ const Calculo = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2e8b57',
+    backgroundColor: '#2e8b57',   
   },
   header: {
     backgroundColor: '#2e8b57', 
-  },
-  back: {
-    color: '#2e8b57', 
+    paddingStart: '6%',
   },
   title: {
     alignSelf: 'center',
@@ -116,7 +111,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
     marginBottom: 20,
-    
   },
   card: {
     borderWidth: 1,
@@ -151,7 +145,6 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 5,
     width: 100,
-    
   },
   prevButton: {
     borderColor: 'white',
@@ -178,3 +171,4 @@ const styles = StyleSheet.create({
 });
 
 export default Calculo;
+
