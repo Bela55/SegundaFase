@@ -1,18 +1,78 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { useNavigation } from '@react-navigation/native';
 import RNPickerSelect from 'react-native-picker-select';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function Register() {
     const navigation = useNavigation();
+    const [nome, setNome] = useState('');
+    const [sobrenome, setSobrenome] = useState('');
+    const [email, setEmail] = useState('');
+    const [senha, setSenha] = useState('');
+    const [confirmarSenha, setConfirmarSenha] = useState('');
     const [day, setDay] = useState('');
     const [month, setMonth] = useState('');
     const [year, setYear] = useState('');
     const [gender, setGender] = useState('');
+    const [errors, setErrors] = useState({});
+
+    const validarFormulario = () => {
+        const novosErros = {};
+
+        if (!nome) {
+            novosErros.nome = 'Por favor, preencha o campo de nome.';
+        }
+
+        if (!sobrenome) {
+            novosErros.sobrenome = 'Por favor, preencha o campo de sobrenome.';
+        }
+
+        if (!email) {
+            novosErros.email = 'Por favor, preencha o campo de e-mail.';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            novosErros.email = 'Por favor, insira um e-mail válido.';
+        }
+
+        if (!senha) {
+            novosErros.senha = 'Por favor, preencha o campo de senha.';
+        }
+
+        if (senha !== confirmarSenha) {
+            novosErros.confirmarSenha = 'As senhas não coincidem.';
+        }
+
+        if (!day || !month || !year) {
+            novosErros.dataNascimento = 'Por favor, preencha a data de nascimento corretamente.';
+        }
+
+        if (!gender) {
+            novosErros.gender = 'Por favor, selecione o gênero.';
+        }
+
+        setErrors(novosErros);
+
+        return Object.keys(novosErros).length === 0;
+    };
+
+    const handleSubmit = () => {
+        const formularioValido = validarFormulario();
+
+        if (formularioValido) {
+            console.log('Formulário válido. Enviando dados...');
+            Alert.alert('Cadastro realizado com sucesso!', 'Você será redirecionado para o login.');
+            navigation.navigate('Login');
+        } else {
+            console.log('Formulário inválido. Corrija os erros antes de enviar.');
+        }
+    };
 
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.container}
+        >
             <View style={styles.containerLogo}>
                 <Animatable.Image
                     animation="flipInY"
@@ -23,13 +83,48 @@ export default function Register() {
             </View>
 
             <Animatable.View animation="fadeInUp" style={styles.containerForm}>
-                <TextInput placeholder="Digite seu nome" style={styles.input} />
-                <TextInput placeholder="Sobrenome" style={styles.input} />
-                <TextInput placeholder="E-mail" style={styles.input} />
-                <TextInput placeholder="Nova senha" style={styles.input} />
-                <TextInput placeholder="Confirmar senha" style={styles.input} />
+                <TextInput
+                    placeholder="Digite seu nome"
+                    style={styles.input}
+                    value={nome}
+                    onChangeText={(text) => setNome(text)}
+                />
+                {errors.nome && <Text style={styles.errorText}>{errors.nome}</Text>}
 
-                {/* Campos para Data de Nascimento */}
+                <TextInput
+                    placeholder="Sobrenome"
+                    style={styles.input}
+                    value={sobrenome}
+                    onChangeText={(text) => setSobrenome(text)}
+                />
+                {errors.sobrenome && <Text style={styles.errorText}>{errors.sobrenome}</Text>}
+
+                <TextInput
+                    placeholder="E-mail"
+                    style={styles.input}
+                    value={email}
+                    onChangeText={(text) => setEmail(text)}
+                />
+                {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+
+                <TextInput
+                    placeholder="Nova senha"
+                    style={styles.input}
+                    secureTextEntry={true}
+                    value={senha}
+                    onChangeText={(text) => setSenha(text)}
+                />
+                {errors.senha && <Text style={styles.errorText}>{errors.senha}</Text>}
+
+                <TextInput
+                    placeholder="Confirmar senha"
+                    style={styles.input}
+                    secureTextEntry={true}
+                    value={confirmarSenha}
+                    onChangeText={(text) => setConfirmarSenha(text)}
+                />
+                {errors.confirmarSenha && <Text style={styles.errorText}>{errors.confirmarSenha}</Text>}
+
                 <View style={styles.dateInputContainer}>
                     <TextInput
                         placeholder="Dia"
@@ -53,8 +148,8 @@ export default function Register() {
                         onChangeText={text => setYear(text)}
                     />
                 </View>
+                {errors.dataNascimento && <Text style={styles.errorText}>{errors.dataNascimento}</Text>}
 
-                {/* Selecionar Gênero */}
                 <RNPickerSelect
                     placeholder={{ label: 'Selecione o Gênero', value: null }}
                     items={[
@@ -66,13 +161,14 @@ export default function Register() {
                     onValueChange={(value) => setGender(value)}
                     style={pickerSelectStyles}
                 />
+                {errors.gender && <Text style={styles.errorText}>{errors.gender}</Text>}
 
-                <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText} onPress={() => navigation.navigate('Login')}>Cadastre-se</Text>
+                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                    <Text style={styles.buttonText}>Cadastre-se</Text>
                 </TouchableOpacity>
             </Animatable.View>
-        </View>
-    )
+        </KeyboardAvoidingView>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -127,6 +223,11 @@ const styles = StyleSheet.create({
         marginTop: 12,
         marginBottom: 12,
     },
+    errorText: {
+        color: 'red',
+        fontSize: 14,
+        marginBottom: 8,
+    },
 });
 
 const pickerSelectStyles = StyleSheet.create({
@@ -146,6 +247,6 @@ const pickerSelectStyles = StyleSheet.create({
         marginBottom: 12,
         fontSize: 16,
         paddingHorizontal: 10,
-        paddingRight: 30, 
+        paddingRight: 30,
     },
 });
