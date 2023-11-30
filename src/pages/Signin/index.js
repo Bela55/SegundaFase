@@ -15,14 +15,20 @@ export default function SignIn() {
   };
 
   const handleLogin = () => {
-    const loginValido = true; // Substitua por sua lógica real de validação do login
-    const senhaValida = true; // Substitua por sua lógica real de validação da senha
+    if (!email || !senha) {
+
+      Alert.alert('Erro', 'Por favor, preencha todos os campos', [{ text: 'OK', style: 'destructive' }]);
+      return;
+    }
+
+    const loginValido = true; 
+    const senhaValida = true; 
 
     if (loginValido && senhaValida) {
-      // Login bem-sucedido, navegue para a próxima tela ou execute outras ações necessárias
+     
       navigation.navigate('Ola, Sr(a) Pessoa');
     } else {
-      // Login inválido, exiba um alerta em vermelho
+  
       Alert.alert('Erro', 'Login ou senha inválidos', [{ text: 'OK', style: 'destructive' }]);
     }
   };
@@ -50,7 +56,7 @@ export default function SignIn() {
             value={senha}
             onChangeText={(text) => setSenha(text)}
           />
-          {/* Ícone do olho dentro do campo de senha */}
+      
           <TouchableOpacity style={styles.iconContainer} onPress={toggleMostrarSenha}>
             <Icon name={mostrarSenha ? 'eye-slash' : 'eye'} size={20} color="#2e8b57" />
           </TouchableOpacity>
@@ -104,9 +110,6 @@ const styles = StyleSheet.create({
     height: 40,
     marginBottom: 12,
     fontSize: 16,
-  },
-  toggleButton: {
-    alignItems: 'flex-end',
   },
   button: {
     backgroundColor: '#2e8b57',
