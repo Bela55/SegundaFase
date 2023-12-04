@@ -14,7 +14,7 @@ export default function Home() {
 
     const handleLogout = () => {
         toggleModal(); 
-        // lógica de logout
+        
         navigation.navigate('Login'); 
     };
 
