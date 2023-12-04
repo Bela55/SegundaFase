@@ -14,7 +14,7 @@ export default function Home() {
 
     const handleLogout = () => {
         toggleModal(); 
-        // lógica de logout
+        
         navigation.navigate('Login'); 
     };
 
@@ -179,3 +179,61 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
 });
+
+
+
+
+
+FazendaContext.js
+
+import React, { createContext, useContext, useState } from 'react';
+
+const FazendaContext = createContext();
+
+export const FazendaProvider = ({ children, adicionarAoHistorico }) => {
+  const [fazendas, setFazendas] = useState([]);
+  const [nomeFazenda, setNomeFazenda] = useState('');
+
+  const adicionarFazenda = (novaFazenda) => {
+    setFazendas([...fazendas, novaFazenda]);
+    adicionarAoHistorico(`Fazenda adicionada: ${novaFazenda.nome}`);
+  };
+  
+  const atualizarFazenda = (id, novosDados) => {
+    const fazendasAtualizadas = fazendas.map((fazenda) => {
+      if (fazenda.id === id) {
+        return { ...fazenda, ...novosDados };
+      }
+      return fazenda;
+    });
+
+    setFazendas(fazendasAtualizadas);
+  };
+
+  const removerFazenda = (id) => {
+    const fazendasFiltradas = fazendas.filter((fazenda) => fazenda.id !== id);
+    setFazendas(fazendasFiltradas);
+  };
+
+  return (
+    <FazendaContext.Provider
+      value={{
+        fazendas,
+        setFazendas,
+        nomeFazenda,
+        setNomeFazenda,
+        adicionarFazenda,
+        atualizarFazenda,
+        removerFazenda,
+        adicionarAoHistorico,
+      }}
+    >
+      {children}
+    </FazendaContext.Provider>
+  );
+};
+
+export const useFazenda = () => {
+  return useContext(FazendaContext);
+};
+
