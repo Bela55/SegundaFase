@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity, KeyboardAvoidingView, Platform, Alert, ScrollView} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { useNavigation } from '@react-navigation/native';
 import RNPickerSelect from 'react-native-picker-select';
@@ -60,7 +60,7 @@ export default function Register() {
         const formularioValido = validarFormulario();
 
         if (formularioValido) {
-            console.log('Formulário válido. Enviando dados...');
+        
             Alert.alert('Cadastro realizado com sucesso!', 'Você será redirecionado para o login.');
             navigation.navigate('Login');
         } else {
@@ -69,6 +69,7 @@ export default function Register() {
     };
 
     return (
+        
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={styles.container}
@@ -83,6 +84,7 @@ export default function Register() {
             </View>
 
             <Animatable.View animation="fadeInUp" style={styles.containerForm}>
+            <ScrollView>
                 <TextInput
                     placeholder="Digite seu nome"
                     style={styles.input}
@@ -166,8 +168,11 @@ export default function Register() {
                 <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                     <Text style={styles.buttonText}>Cadastre-se</Text>
                 </TouchableOpacity>
+            </ScrollView>
+
             </Animatable.View>
         </KeyboardAvoidingView>
+        
     );
 }
 
