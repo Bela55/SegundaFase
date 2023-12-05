@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Image, Alert, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useFazenda } from '../../Context/FazendaContext'; 
+import { useHistorico } from '../../Context/HistoryContext'; 
 
 export default function Remove() {
   const navigation = useNavigation();
-  const [fazendas, setFazendas] = useState([
-    { id: 1, nome: 'Rancho da Serra', imageSource: require('../../assets/logo-teste.png'), selecionada: false },
-    { id: 2, nome: 'Fazenda Bem-te-vi', imageSource: require('../../assets/logo-teste.png'), selecionada: false },
-    { id: 3, nome: 'Rancho Fundo', imageSource: require('../../assets/logo-teste.png'), selecionada: false },
-    { id: 4, nome: 'Fazenda do Lago', imageSource: require('../../assets/logo-teste.png'), selecionada: false },
-  ]);
+  const { fazendas, setFazendas } = useFazenda();
+  const { adicionarAoHistorico } = useHistorico();
 
   const toggleSelecionada = (id) => {
     const fazendasAtualizadas = fazendas.map((fazenda) => {
@@ -23,6 +21,13 @@ export default function Remove() {
   };
 
   const confirmarRemocao = () => {
+    const fazendasSelecionadas = fazendas.filter((fazenda) => fazenda.selecionada);
+
+    if (fazendasSelecionadas.length === 0) {
+      Alert.alert('Nenhuma fazenda selecionada para remover');
+      return;
+    }
+
     Alert.alert(
       'Confirmação',
       'Tem certeza de que deseja remover as fazendas selecionadas?',
@@ -34,18 +39,17 @@ export default function Remove() {
         {
           text: 'Remover',
           onPress: () => {
-            removeFazendasSelecionadas();
+            const fazendasNaoSelecionadas = fazendas.filter((fazenda) => !fazenda.selecionada);
+            setFazendas(fazendasNaoSelecionadas);
+
+            const acaoRemocao = `Fazendas removidas: ${fazendasSelecionadas.map((fazenda) => fazenda.nome).join(', ')}`;
+            adicionarAoHistorico(acaoRemocao);
           },
         },
       ]
     );
   };
-
-  const removeFazendasSelecionadas = () => {
-    const fazendasNaoSelecionadas = fazendas.filter((fazenda) => !fazenda.selecionada);
-    setFazendas(fazendasNaoSelecionadas);
-  };
-
+  
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={[
@@ -155,4 +159,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#2e8b57',
   },
-}); 
+});

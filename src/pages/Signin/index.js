@@ -4,35 +4,51 @@ import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 
-export default function SignIn() {
+import { signIn } from "../../fireB/AuthService";
+
+function SignIn() {
   const navigation = useNavigation();
   const [senha, setSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [email, setEmail] = useState('');
+  const [desativarBotao, setDesativarBotao] = useState(false);
+
+
 
   const toggleMostrarSenha = () => {
     setMostrarSenha(!mostrarSenha);
   };
 
   const handleLogin = () => {
-    if (!email || !senha) {
+    const emailExemplo = 'reginaldo@gmail.com';
+    const senhaExemplo = '12345';
 
-      Alert.alert('Erro', 'Por favor, preencha todos os campos', [{ text: 'OK', style: 'destructive' }]);
-      return;
-    }
-
-    const loginValido = true; 
-    const senhaValida = true; 
-
-    if (loginValido && senhaValida) {
-     
+    if (email === emailExemplo && senha === senhaExemplo) {
+      alert('Autenticado com sucesso!');
       navigation.navigate('Ola, Sr(a) Pessoa');
     } else {
-  
+      alert('Email ou senha incorretos. Tente novamente.');
+      setDesativarBotao(true);
+    }
+  };
+
+  const habilitarBotao = () => {
+    setDesativarBotao(false);
+
+    const loginValido = true;
+    const senhaValida = true;
+
+    if (loginValido && senhaValida) {
+
+      navigation.navigate('Ola, Sr(a) Pessoa');
+    } else {
+
       Alert.alert('Erro', 'Login ou senha inválidos', [{ text: 'OK', style: 'destructive' }]);
     }
   };
-  
+
+
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
@@ -56,12 +72,12 @@ export default function SignIn() {
             value={senha}
             onChangeText={(text) => setSenha(text)}
           />
-      
+
           <TouchableOpacity style={styles.iconContainer} onPress={toggleMostrarSenha}>
             <Icon name={mostrarSenha ? 'eye-slash' : 'eye'} size={20} color="#2e8b57" />
           </TouchableOpacity>
         </View>
-    
+
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText} >Acessar</Text>
         </TouchableOpacity>
@@ -150,3 +166,5 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
 });
+
+export default SignIn;
