@@ -1,104 +1,112 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
+import { useFazenda } from '../../Context/FazendaContext'; 
+import { useHistorico } from '../../Context/HistoryContext'; 
 
-export default function CadFazenda() {
+export default function Cadastrar() {
   const navigation = useNavigation();
-  const [imageData, setImageData] = useState([
-    { id: 1, name: '', imageSource: null },
-    { id: 2, name: '', imageSource: null },
-    { id: 3, name: '', imageSource: null },
-    { id: 4, name: '', imageSource: null },
-    { id: 5, name: '', imageSource: null },
-    { id: 6, name: '', imageSource: null },
-  ]);
+  const { fazendas, setFazendas } = useFazenda();
+  const { adicionarAoHistorico } = useHistorico();
 
-  const updateImageData = (id, name, imageSource) => {
-    const updatedData = [...imageData];
-    const index = updatedData.findIndex((item) => item.id === id);
-    updatedData[index] = { id, name, imageSource };
-    setImageData(updatedData);
+  const [fazendaData, setFazendaData] = useState({
+    nomeFazenda: '',
+    imagem: null,
+    data: '',
+    quantidadeGado: '',
+  });
+
+  const formatarMilhar = (value) => {
+    return value.replace(/\D/g, '') 
+      .replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
   };
 
-  const renderImageInputs = () => {
-    const rows = [];
-    for (let i = 0; i < imageData.length; i += 2) {
-      const leftItem = imageData[i];
-      const rightItem = imageData[i + 1];
-      rows.push(
-        <View key={i} style={styles.row}>
-          {leftItem && (
-            <View style={styles.imageInputContainer}>
-              <TouchableOpacity
-              onPress={() => navigation.navigate('Inserir dados')}
-                style={styles.imageContainer}
-              >
-                {leftItem.imageSource ? (
-                  <Image source={leftItem.imageSource} style={styles.imagePreview} />
-                ) : (
-                  <View style={styles.addButton}>
-                    <Icon name="plus" size={30} color="white" />
-                  </View>
-                )}
-              </TouchableOpacity>
-              <View style={styles.nameInputContainer}>
-                <TextInput
-                  placeholder="Nome da Imagem"
-                  value={leftItem.name}
-                  onChangeText={(text) =>
-                    updateImageData(leftItem.id, text, leftItem.imageSource)
-                  }
-                  style={{ textAlign: 'center' }}
-                />
-              </View>
-            </View>
-          )}
-          {rightItem && (
-            <View style={styles.imageInputContainer}>
-              <TouchableOpacity
-               onPress={() => navigation.navigate('Inserir dados')}
-                style={styles.imageContainer}
-              >
-                {rightItem.imageSource ? (
-                  <Image source={rightItem.imageSource} style={styles.imagePreview} />
-                ) : (
-                  <View style={styles.addButton}>
-                    <Icon name="plus" size={30} color="white" />
-                  </View>
-                )}
-              </TouchableOpacity>
-              <View style={styles.nameInputContainer}>
-                <TextInput
-                  placeholder="Nome da Imagem"
-                  value={rightItem.name}
-                  onChangeText={(text) =>
-                    updateImageData(rightItem.id, text, rightItem.imageSource)
-                  }
-                  style={{ textAlign: 'center' }}
-                />
-              </View>
-            </View>
-          )}
-        </View>
-      );
+  const handleChange = (field, value) => {
+    let formattedValue = value;
+
+    if (field === 'data') {
+      
+      formattedValue = value.replace(/\D/g, '');
+
+      if (formattedValue.length <= 2) {
+        formattedValue = formattedValue.replace(/^(\d{0,2})/, '$1');
+      } else if (formattedValue.length <= 4) {
+        formattedValue = formattedValue.replace(/^(\d{0,2})(\d{0,2})/, '$1/$2');
+      } else {
+        formattedValue = formattedValue.replace(/^(\d{0,2})(\d{0,2})(\d{0,4})/, '$1/$2/$3').slice(0, 10);
+      }
+    } else if (field === 'quantidadeGado') {
+     
+      formattedValue = formatarMilhar(value);
     }
-    return rows;
+
+    setFazendaData({ ...fazendaData, [field]: formattedValue }); 
   };
 
-  const addImage = (id) => {
-    // lógica para adicionar imagens 
+  const handleEnviar = () => {
+    const { nomeFazenda, data, quantidadeGado } = fazendaData;
+  
+    if (!nomeFazenda || !data || !quantidadeGado) {
+      Alert.alert('Campos obrigatórios', 'Preencha todos os campos antes de enviar.');
+      return;
+    }
+  
+    const newFazenda = {
+      id: fazendas.length + 1,
+      nome: nomeFazenda,
+      imageSource: null,
+      data: data,
+      quantidadeGado: quantidadeGado.replace(/\D/g, ''), // Remover ponto ao salvar
+      selecionada: false,
+    };
+  
+    const newFazendas = [...fazendas, newFazenda];
+    setFazendas(newFazendas);
+  
+    const acaoCriacao = `Nova fazenda criada: ${nomeFazenda}`;
+    adicionarAoHistorico && adicionarAoHistorico(acaoCriacao); 
+  
+    navigation.goBack();
   };
 
   return (
     <SafeAreaView style={styles.container}>
-    <View style={styles.header}>
-      <TouchableOpacity onPress={ () => navigation.navigate('Ola, Sr(a) Pessoa')}>
-        <Icon name="arrow-left" size={24} color="white" />
-      </TouchableOpacity>
-      <Text style={styles.title}>Cadastro de Fazenda </Text>
-    </View>
-      <ScrollView contentContainerStyle={styles.centeredContainer}>{renderImageInputs()}</ScrollView>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-left" size={24} color="white" />
+        </TouchableOpacity>
+        <Text style={styles.title}>Cadastrar Fazenda</Text>
+      </View>
+      <View style={styles.content}>
+        <Text style={styles.label}>Nome da Fazenda</Text>
+        <TextInput
+          placeholder="Insira o nome da fazenda"
+          value={fazendaData.nomeFazenda}
+          onChangeText={(text) => handleChange('nomeFazenda', text)}
+          style={styles.input}
+        />
+        <Text style={styles.label}>Data</Text>
+        <TextInput
+          placeholder="Insira a data (dd/mm/yyyy)"
+          value={fazendaData.data}
+          onChangeText={(text) => handleChange('data', text)}
+          style={styles.input}
+          keyboardType="numeric"
+          maxLength={10}
+        />
+        <Text style={styles.label}>Quantidade de Gado</Text>
+        <TextInput
+          placeholder="Insira a quantidade de gado"
+          value={fazendaData.quantidadeGado}
+          onChangeText={(text) => handleChange('quantidadeGado', text)}
+          style={styles.input}
+          keyboardType="numeric"
+        />
+        <TouchableOpacity style={styles.enviarButton} onPress={handleEnviar}>
+          <Text style={styles.enviarButtonText}>Enviar</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -108,9 +116,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#2e8b57',
     padding: 16,
-    paddingStart: '2%',
-    paddingEnd: '2%',
-    justifyContent: 'center',
   },
   header: {
     flexDirection: 'row',
@@ -122,55 +127,41 @@ const styles = StyleSheet.create({
     padding: '4%'
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
+    textAlign: 'center', 
     flex: 1, 
-    textAlign: 'center',
   },
-  
-  centeredContainer: {
-    alignItems: 'center',
-    padding: 16,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  imageInputContainer: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    margin: 8,
+  content: {
     backgroundColor: 'white',
-    padding: 8,
+    padding: 18,
+    marginTop: 16,
     borderRadius: 8,
+    margin: 20,
   },
-  imageContainer: {
-    width: 150,
-    height: 150,
-    backgroundColor: 'white',
-    borderRadius: 8,
+  label: {
+    fontSize: 18,
     marginBottom: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
+    color: '#2e8b57',
   },
-  imagePreview: {
-    width: 100,
-    height: 100,
+  input: {
+    backgroundColor: '#f0f0f0',
     borderRadius: 8,
+    padding: 8,
+    marginBottom: 16,
   },
-  addButton: {
-    width: 60,
-    height: 60,
-    alignItems: 'center',
+  enviarButton: {
     backgroundColor: '#2e8b57',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: '#2e8b57',
-    borderRadius: 50,
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 32,
+    marginTop: '8%',
   },
-  nameInputContainer: {
-    marginTop: 8,
-    width: 150,
+  enviarButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
   },
 });
