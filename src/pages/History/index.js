@@ -17,74 +17,22 @@ export default function HistoricoScreen() {
   const [fazendas, setFazendas, dados, Setdados] = useState([
     {
       id: 1,
-      nome: 'Rancho da Serra',
+      nome: 'Reginaldos farm',
       imageSource: require('../../assets/logo-teste.png'),
       selecionada: false,
       dadosOcultos: ['Volume do biodigestor: 100 m²',
         'Altura total do biodigestor: 10 m',
         'Diametro da câmara do biodigestor: 20 m',
-        'Altura da câmara do biodigetor: 00 m',
-        'Diâmetro do biodigestor: 00 m',
-        'Altura do gasômetro: 00 m',
-        'Comprimento do cano guia: 00 m',
-        'Dimenssões dos tanques de carga e descarga: 00 m',
-        'Comprimento do cano de descarga: 00 m',
-        'Comprimento do cano de carga: 00 m',
-        'Volume de gás produzido pelo biodigestor: 00 m²',]
+        'Altura da câmara do biodigetor: 9 m',
+        'Diâmetro do biodigestor: 10 m',
+        'Altura do gasômetro: 4 m',
+        'Comprimento do cano guia: 20 m',
+        'Dimenssões dos tanques de carga e descarga: 7 m',
+        'Comprimento do cano de descarga: 9 m',
+        'Comprimento do cano de carga: 10 m',
+        'Volume de gás produzido pelo biodigestor: 200 m²',]
     },
-    {
-      id: 2,
-      nome: 'Fazenda Bem-te-vi',
-      imageSource: require('../../assets/logo-teste.png'),
-      selecionada: false,
-      dadosOcultos: ['Volume do biodigestor: 200 m²',
-      'Altura total do biodigestor: 10 m',
-      'Diametro da câmara do biodigestor: 40 m',
-      'Altura da câmara do biodigetor: 00 m',
-      'Diâmetro do biodigestor: 00 m',
-      'Altura do gasômetro: 00 m',
-      'Comprimento do cano guia: 00 m',
-      'Dimenssões dos tanques de carga e descarga: 00 m',
-      'Comprimento do cano de descarga: 00 m',
-      'Comprimento do cano de carga: 00 m',
-      'Volume de gás produzido pelo biodigestor: 00 m²',]
-
-    },
-    {
-      id: 3,
-      nome: 'Rancho Fundo',
-      imageSource: require('../../assets/logo-teste.png'),
-      selecionada: false,
-      dadosOcultos: ['Volume do biodigestor: 100 m²',
-      'Altura total do biodigestor: 10 m',
-      'Diametro da câmara do biodigestor: 20 m',
-      'Altura da câmara do biodigetor: 00 m',
-      'Diâmetro do biodigestor: 00 m',
-      'Altura do gasômetro: 00 m',
-      'Comprimento do cano guia: 00 m',
-      'Dimenssões dos tanques de carga e descarga: 00 m',
-      'Comprimento do cano de descarga: 00 m',
-      'Comprimento do cano de carga: 00 m',
-      'Volume de gás produzido pelo biodigestor: 00 m²',]
-    },
-    {
-      id: 4,
-      nome: 'Rancho dos Vales',
-      imageSource: require('../../assets/logo-teste.png'),
-      selecionada: false,
-      dadosOcultos: ['Volume do biodigestor: 100 m²',
-      'Altura total do biodigestor: 10 m',
-      'Diametro da câmara do biodigestor: 20 m',
-      'Altura da câmara do biodigetor: 00 m',
-      'Diâmetro do biodigestor: 00 m',
-      'Altura do gasômetro: 00 m',
-      'Comprimento do cano guia: 00 m',
-      'Dimenssões dos tanques de carga e descarga: 00 m',
-      'Comprimento do cano de descarga: 00 m',
-      'Comprimento do cano de carga: 00 m',
-      'Volume de gás produzido pelo biodigestor: 00 m²',]
-    },
-  ]);
+      ]);
 
   const [selecoes, setSelecoes] = useState({});
   const [resultado, setResultado] = useState(null);
@@ -104,13 +52,6 @@ export default function HistoricoScreen() {
       ...prevState,
       [id]: !prevState[id],
     }));
-  };
-
-  const calcularFazendasSelecionadas = () => {
-    // Lógica para calcular as fazendas selecionadas aqui
-    const fazendasSelecionadas = fazendas.filter((fazenda) => fazenda.selecionada);
-    // lógica do cálculo aqui
-    setResultado(`Fazendas selecionadas: ${fazendasSelecionadas.length}`);
   };
 
   const renderItem = ({ item }) => (
