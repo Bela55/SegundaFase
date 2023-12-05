@@ -60,7 +60,7 @@ export default function Register() {
         const formularioValido = validarFormulario();
 
         if (formularioValido) {
-        
+            Alert.alert('Formulário válido. Enviando dados...');
             Alert.alert('Cadastro realizado com sucesso!', 'Você será redirecionado para o login.');
             navigation.navigate('Login');
         } else {
